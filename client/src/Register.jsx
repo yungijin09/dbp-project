@@ -51,7 +51,7 @@ function Register({ changeView }) {
       const response = await fetch('http://localhost:5000/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone }), // DB 명세에 맞춘 데이터
+        body: JSON.stringify({ name, phone, password }), // DB 명세에 맞춘 데이터
       });
 
       const data = await response.json();
@@ -64,7 +64,7 @@ function Register({ changeView }) {
         setErrors({ serverError: data.message || '가입 중 오류가 발생했습니다.' });
       }
     } catch (error) {
-      setErrors({ serverError: '백엔드 서버가 켜져 있는지 확인해 주세요!' });
+      console.log(setErrors({ serverError: '백엔드 서버가 켜져 있는지 확인해 주세요!' }));
       console.log(error);
     }
   };

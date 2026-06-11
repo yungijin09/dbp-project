@@ -30,7 +30,7 @@ db.connect((err) => {
 // 📝 [API 1] 회원가입 라우터 (React로부터 데이터를 받아 DB에 저장)
 // ==========================================
 app.post('/api/register', (req, res) => {
-  const { name, phone } = req.body; // 리액트에서 보낸 데이터 받아오기
+  const { name, phone, password } = req.body; // 리액트에서 보낸 데이터 받아오기
 
   // 간단한 유효성 검사
   if (!name || !phone) {
@@ -41,9 +41,9 @@ app.post('/api/register', (req, res) => {
   // 제공해주신 테이블의 member_id가 AUTO_INCREMENT가 아니기 때문에 임시로 현재 타임스탬프 기반 숫자를 부여하거나 필요시 테이블 수정이 필요할 수 있습니다.
   const tempMemberId = Math.floor(Math.random() * 1000000); 
 
-  const query = 'INSERT INTO member (member_id, name, phone) VALUES (?, ?, ?)';
+  const query = 'INSERT INTO member (member_id, name, phone, password) VALUES (?, ?, ?, ?)';
   
-  db.query(query, [tempMemberId, name, phone], (err, result) => {
+  db.query(query, [tempMemberId, name, phone, password], (err, result) => {
     if (err) {
       console.error('회원가입 쿼리 에러:', err);
       // 휴대폰 번호 중복 처리
@@ -62,15 +62,16 @@ app.post('/api/register', (req, res) => {
 // ==========================================
 app.post('/api/login', (req, res) => {
   const { phone } = req.body;
+  const { password } = req.body;
 
   if (!phone || !phone.trim()) {
     return res.status(400).json({ success: false, message: '전화번호를 입력해주세요.' });
   }
 
   // 탈퇴하지 않은 회원 중 전화번호가 일치하는 회원 조회
-  const query = 'SELECT * FROM member WHERE phone = ? AND is_deleted = 0';
+  const query = 'SELECT * FROM member WHERE phone = ? AND is_deleted = 0 AND password = ?' ;
   
-  db.query(query, [phone.trim()], (err, results) => {
+  db.query(query, [phone.trim(), password], (err, results) => {
     if (err) {
       console.error('로그인 쿼리 에러:', err);
       return res.status(500).json({ success: false, message: '서버 에러가 발생했습니다.' });
@@ -88,7 +89,8 @@ app.post('/api/login', (req, res) => {
       user: {
         id: results[0].member_id,
         name: results[0].name,
-        phone: results[0].phone
+        phone: results[0].phone,
+        password: results[0].password,
       }
     });
   });

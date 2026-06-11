@@ -34,6 +34,7 @@ CREATE TABLE `member` (
   `member_id` int unsigned NOT NULL,
   `name` varchar(45) NOT NULL,
   `phone` varchar(45) NOT NULL,
+  `password` varchar(45) NOT NULL,
   `is_deleted` tinyint NOT NULL DEFAULT '0',
   `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`member_id`),
